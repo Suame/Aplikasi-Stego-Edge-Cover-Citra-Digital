@@ -51,9 +51,7 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
 
         public Canny(Bitmap Input, float Th, float Tl)
         {
-
             // Gaussian and Canny Parameters
-
             MaxHysteresisThresh = Th;
             MinHysteresisThresh = Tl;
 

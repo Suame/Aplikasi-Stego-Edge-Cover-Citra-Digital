@@ -6,3 +6,11 @@ c:\users\suame\documents\visual studio 2010\Projects\APLIKASI STEGO EDGE COVER C
 c:\users\suame\documents\visual studio 2010\Projects\APLIKASI STEGO EDGE COVER CITRA DIGITAL\APLIKASI STEGO EDGE COVER CITRA DIGITAL\obj\x86\Debug\APLIKASI STEGO EDGE COVER CITRA DIGITAL.exe
 c:\users\suame\documents\visual studio 2010\Projects\APLIKASI STEGO EDGE COVER CITRA DIGITAL\APLIKASI STEGO EDGE COVER CITRA DIGITAL\obj\x86\Debug\APLIKASI STEGO EDGE COVER CITRA DIGITAL.pdb
 C:\Users\suame\Documents\Visual Studio 2010\Projects\APLIKASI STEGO EDGE COVER CITRA DIGITAL\APLIKASI STEGO EDGE COVER CITRA DIGITAL\obj\x86\Debug\APLIKASI STEGO EDGE COVER CITRA DIGITAL.csprojResolveAssemblyReference.cache
+C:\Users\suame\Documents\GitHub\Aplikasi-Stego-Edge-Cover-Citra-Digital\APLIKASI STEGO EDGE COVER CITRA DIGITAL\obj\x86\Debug\APLIKASI STEGO EDGE COVER CITRA DIGITAL.exe
+C:\Users\suame\Documents\GitHub\Aplikasi-Stego-Edge-Cover-Citra-Digital\APLIKASI STEGO EDGE COVER CITRA DIGITAL\obj\x86\Debug\APLIKASI STEGO EDGE COVER CITRA DIGITAL.pdb
+C:\Users\suame\Documents\GitHub\Aplikasi-Stego-Edge-Cover-Citra-Digital\APLIKASI STEGO EDGE COVER CITRA DIGITAL\bin\Debug\APLIKASI STEGO EDGE COVER CITRA DIGITAL.exe
+C:\Users\suame\Documents\GitHub\Aplikasi-Stego-Edge-Cover-Citra-Digital\APLIKASI STEGO EDGE COVER CITRA DIGITAL\bin\Debug\APLIKASI STEGO EDGE COVER CITRA DIGITAL.pdb
+C:\Users\suame\Documents\GitHub\Aplikasi-Stego-Edge-Cover-Citra-Digital\APLIKASI STEGO EDGE COVER CITRA DIGITAL\obj\x86\Debug\APLIKASI STEGO EDGE COVER CITRA DIGITAL.csprojResolveAssemblyReference.cache
+C:\Users\suame\Documents\GitHub\Aplikasi-Stego-Edge-Cover-Citra-Digital\APLIKASI STEGO EDGE COVER CITRA DIGITAL\obj\x86\Debug\APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL.Form1.resources
+C:\Users\suame\Documents\GitHub\Aplikasi-Stego-Edge-Cover-Citra-Digital\APLIKASI STEGO EDGE COVER CITRA DIGITAL\obj\x86\Debug\APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL.Properties.Resources.resources
+C:\Users\suame\Documents\GitHub\Aplikasi-Stego-Edge-Cover-Citra-Digital\APLIKASI STEGO EDGE COVER CITRA DIGITAL\obj\x86\Debug\APLIKASI STEGO EDGE COVER CITRA DIGITAL.csproj.GenerateResource.Cache

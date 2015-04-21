@@ -30,7 +30,7 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
 
             do
             {
-                tH = (float)Math.Ceiling((tMax + tMin) / 2F);
+                tH = (float)Math.Floor((tMax + tMin) / 2F);
                 tL = 0.4F * tH;
                 Canny CannyData = new Canny(image, tH, tL);
                 nE = CannyData.CountEdges();
@@ -56,7 +56,7 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
         private Bitmap Embed(Bitmap image, string message, int p)
         {
             int l = message.Length;
-            int[,] e;
+            Bitmap e;
             float tH, tL;
             Canny CannyData;
             Bitmap stegoImage = (Bitmap)image.Clone();
@@ -100,8 +100,12 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
 
             //obtain e: e is edge map obtained by calling canny edge detection algorithm
             CannyData = new Canny(image, tH, tL);
-            e = CannyData.EdgeMap;
-
+            e = CannyData.DisplayImage(CannyData.EdgeMap);
+            //pictureBox1.Image = CannyData.DisplayImage(e);
+       /*     randomPermute permute = new randomPermute(p);
+            randomPermute permute1 = new randomPermute(p);
+            e = permute.Encrypt(e);
+            stegoImage = permute1.Encrypt(stegoImage);*/
             //embed message
             int index = 0;
 
@@ -111,11 +115,11 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
             {
                 byte* imagePointer1 = (byte*)bitmapData1.Scan0;
 
-                for (int i = 0; i < e.GetLength(0); i++)
+                for (int i = 0; i < e.Height; i++)
                 {
-                    for (int j = 0; j < e.GetLength(1); j++)
+                    for (int j = 0; j < e.Width; j++)
                     {
-                        if (e[i, j] == 255 && index < l)
+                        if (e.GetPixel(j,i).B.Equals(255) && index < l)
                         {
                             int x = imagePointer1[0];
                             x = x & 252;
@@ -138,16 +142,63 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
             }
             stegoImage.UnlockBits(bitmapData1);
             //end embed message
+            /*
+            CannyData = new Canny(stegoImage, 0.1F, 0F);
+            e = CannyData.EdgeMap;
+            pictureBox2.Image = CannyData.DisplayImage(e);
 
+            index = 0;
+
+            BitmapData bitmapData2 = stegoImage.LockBits(new Rectangle(0, 0, stegoImage.Width, stegoImage.Height),
+                                    ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            unsafe
+            {
+                byte* imagePointer2 = (byte*)bitmapData2.Scan0;
+
+                for (int i = 0; i < e.GetLength(1); i++)
+                {
+                    for (int j = 0; j < e.GetLength(0); j++)
+                    {
+                        if (e[j, i] == 0 && index < 16)
+                        {
+                            int x = imagePointer2[0];
+                            x = x & 254;
+                            MessageBox.Show("Non-edge ke : " + index.ToString() + " " + j.ToString() + " " + i.ToString() + " " + e[j, i].ToString());
+                            index++;
+                            imagePointer2[0] = (byte)x;
+                            imagePointer2 += 3;
+                        }
+                        else if (e[j, i] == 0 && index >= 16 && index < 32)
+                        {
+                            int x = imagePointer2[0];
+                            x = x & 254;
+
+                            MessageBox.Show("Non-edge ke : " + index.ToString() + " " + j.ToString() + " " + i.ToString() + " " + e[j, i].ToString());
+                            index++;
+                            imagePointer2[0] = (byte)x;
+                            imagePointer2 += 3;
+                        }
+                        else
+                            break;
+                    }
+                    imagePointer2 += bitmapData2.Stride - (bitmapData2.Width * 3);
+                }
+            }
+            stegoImage.UnlockBits(bitmapData2);
+            */
+            //stegoImage = permute1.Decrypt(stegoImage);
             return stegoImage;
         }
-
+        
         private string Extract(Bitmap image, float t, int p)
         {
+            Canny CannyData;
+            Bitmap e;
             Bitmap stegoImage = (Bitmap)image.Clone();
-
-            //bitand
             Bitmap mask = (Bitmap)stegoImage.Clone();
+
+            
+            //bitand
             BitmapData bitmapData = mask.LockBits(new Rectangle(0, 0, mask.Width, mask.Height),
                                     ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
             unsafe
@@ -168,10 +219,61 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
             }
             mask.UnlockBits(bitmapData);
             //end bitand
+            /*
+            CannyData = new Canny(mask, 0.1F, 0F);
+            e = CannyData.EdgeMap;
+            pictureBox3.Image = CannyData.DisplayImage(e);
 
+            int index = 0;
+
+            BitmapData bitmapData2 = mask.LockBits(new Rectangle(0, 0, mask.Width, mask.Height),
+                                    ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+            unsafe
+            {
+                byte* imagePointer2 = (byte*)bitmapData2.Scan0;
+
+                for (int i = 0; i < e.GetLength(1); i++)
+                {
+                    for (int j = 0; j < e.GetLength(0); j++)
+                    {
+                        if (e[j, i] == 0 && index < 16)
+                        {
+                            int x = imagePointer2[0];
+                            x = x & 1;
+
+                            MessageBox.Show("Non-edge ke : " + index.ToString() + " " + j.ToString() + " " + i.ToString() + " " + e[j, i].ToString());
+                            index++;
+                            imagePointer2[0] = (byte)x;
+                            imagePointer2 += 3;
+                        }
+                        else if (e[j, i] == 0 && index >= 16 && index < 32)
+                        {
+                            int x = imagePointer2[0];
+                            x = x & 1;
+
+                            MessageBox.Show("Non-edge ke : " + index.ToString() + " " + j.ToString() + " " + i.ToString() + " " + e[j, i].ToString());
+                            index++;
+                            imagePointer2[0] = (byte)x;
+                            imagePointer2 += 3;
+                        }
+                        else
+                            break;
+                    }
+                    imagePointer2 += bitmapData2.Stride - (bitmapData2.Width * 3);
+                }
+            }
+            mask.UnlockBits(bitmapData2);
+            */
             float tH = t, tL = 0.4F * tH;
-            Canny CannyData = new Canny(mask, tH, tL);
-            int[,] e = CannyData.EdgeMap;
+            CannyData = new Canny(mask, tH, tL);
+            e = CannyData.DisplayImage(CannyData.EdgeMap);
+            int edge = CannyData.CountEdges();
+
+/*
+            randomPermute permute = new randomPermute(p);
+            randomPermute permute1 = new randomPermute(p);
+            e = permute.Encrypt(e);
+            stegoImage = permute1.Encrypt(stegoImage);*/
 
             //extract message
             string extractedMessage = "";
@@ -181,11 +283,11 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
             {
                 byte* imagePointer1 = (byte*)bitmapData1.Scan0;
 
-                for (int i = 0; i < e.GetLength(0); i++)
+                for (int i = 0; i < e.Height; i++)
                 {
-                    for (int j = 0; j < e.GetLength(1); j++)
+                    for (int j = 0; j < e.Width; j++)
                     {
-                        if (e[i, j] == 255)
+                        if (e.GetPixel(j,i).B.Equals(255))
                         {
                             int x = imagePointer1[0];
                             byte value = (byte)(x & 3);
@@ -200,6 +302,9 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
             }
             stegoImage.UnlockBits(bitmapData1);
             //end extract message
+
+            string binaryC = Convert.ToString((int)((edge - (edge * 0.1F)) / 4F), 2);
+            int c = (int)Math.Ceiling(binaryC.Length / 8F);
 
             //extract first 16 bits to get length of the message
             int l = Convert.ToInt32(extractedMessage.Substring(0, (int)c * 8), 2);
@@ -232,11 +337,10 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
             return Encoding.ASCII.GetString(byteList.ToArray());
         }
 
-                    
         private void pcBoxOpen_Click(object sender, EventArgs e)
         {
             ofd.FileName = "";
-            ofd.Filter = "File Gambar(*.jpg;*.jpeg;*.png,*.bmp,*.pgm)|*.jpg;*.jpeg;*.png;*.bmp;*.pgm";
+            ofd.Filter = "File Gambar(*.png,*.bmp,*.pgm)|*.png;*.bmp;*.pgm";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string extension = Path.GetExtension(ofd.FileName);
@@ -250,25 +354,44 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
                     pcboxCover.Image = _image;
                 }
                 else
-                pcboxCover.Image = new Bitmap(ofd.FileName);
-            }            
+                    pcboxCover.Image = new Bitmap(ofd.FileName);
+            }
         }
 
         private void btnEmbed_Click(object sender, EventArgs e)
         {
             string message = txtBoxEmbedMessage.Text;
             Bitmap image = (Bitmap)pcboxCover.Image;
+            ALFG prng = new ALFG(11);
+            int p = prng.PRNG(5, 7, 2);
 
-            Bitmap stegoImage = Embed(image, message, 10);
-            
+            Bitmap stegoImage = Embed(image, message, p);
+
+            txtBoxStegoKey.Text = p.ToString();
             pcboxEmbedStego.Image = stegoImage;
+        }
 
-            sfd.FileName = "Stego Image.png";
+        private void pcBoxSave_Click(object sender, EventArgs e)
+        {
+            Bitmap stegoImage = (Bitmap)pcboxEmbedStego.Image;
+            string p = txtBoxStegoKey.Text;
+
+            sfd.FileName = "Stego Image " + p + ".png";
+            sfd.Filter = "File Gambar(*.png)|*.png";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
+
                 stegoImage.Save(sfd.FileName, ImageFormat.Png);
             }
         }
+
+        private void btnResetEmbed_Click(object sender, EventArgs e)
+        {
+            txtBoxEmbedMessage.Text = "";
+            txtBoxStegoKey.Text = "";
+            pcboxCover.Image = null;
+            pcboxEmbedStego.Image = null;
+        } 
 
         private void pcBoxOpenStego_Click(object sender, EventArgs e)
         {
@@ -283,10 +406,20 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
         private void btnExtract_Click(object sender, EventArgs e)
         {
             Bitmap stegoImage = (Bitmap)pcBoxExtractStegoImage.Image;
-
+            ALFG prng = new ALFG(11);
+            int p = prng.PRNG(5, 7, 2);
             float tH = threshold;
-            string extractedMessage = Extract(stegoImage, tH, 10);
+
+            string extractedMessage = Extract(stegoImage, tH, p);
             txtBoxExtractMessage.Text = extractedMessage;
-        }     
+        }
+
+        private void btnResetExtract_Click(object sender, EventArgs e)
+        {
+            txtBoxKey.Text = "";
+            txtBoxExtractMessage.Text = "";
+            pcBoxExtractStegoImage.Image = null;
+        }
+            
     }
 }

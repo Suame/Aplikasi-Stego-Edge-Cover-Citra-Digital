@@ -14,7 +14,7 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
     {
         public OpenFileDialog ofd;
         public SaveFileDialog sfd;
-        float threshold, c;
+        float threshold;
         public Form1()
         {
             InitializeComponent();
@@ -73,9 +73,11 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
                 {
                     for (int j = 0; j < image.Width; j++)
                     {
-                        int x = imagePointer[0];
+                        int x = (int)((imagePointer[0] + imagePointer[1] + imagePointer[2]) / 3);
                         x = x & 252;
                         imagePointer[0] = (byte)x;
+                        imagePointer[1] = (byte)x;
+                        imagePointer[2] = (byte)x;
                         imagePointer += 3;
                     }
                     imagePointer += bitmapData.Stride - (bitmapData.Width * 3);
@@ -87,7 +89,7 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
             //add length of the message for C bits before the message
             string binaryL = Convert.ToString(l, 2);
             float C = (float)Math.Ceiling(binaryL.Length / 8F);
-            c = C;
+            
             string lengthMessage = Convert.ToString(l, 2).PadLeft((int)C * 8, '0');
             binaryMessage = lengthMessage + binaryMessage;
             l = binaryMessage.Length;   //length of the augmented message
@@ -101,11 +103,13 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
             //obtain e: e is edge map obtained by calling canny edge detection algorithm
             CannyData = new Canny(image, tH, tL);
             e = CannyData.DisplayImage(CannyData.EdgeMap);
-            //pictureBox1.Image = CannyData.DisplayImage(e);
-       /*     randomPermute permute = new randomPermute(p);
+            
+            //shuffle e and stegoImage using stego key P
+            randomPermute permute = new randomPermute(p);
             randomPermute permute1 = new randomPermute(p);
             e = permute.Encrypt(e);
-            stegoImage = permute1.Encrypt(stegoImage);*/
+            stegoImage = permute1.Encrypt(stegoImage);
+
             //embed message
             int index = 0;
 
@@ -119,9 +123,10 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
                 {
                     for (int j = 0; j < e.Width; j++)
                     {
-                        if (e.GetPixel(j,i).B.Equals(255) && index < l)
+                        int grey = (int)((e.GetPixel(j, i).R + e.GetPixel(j, i).G + e.GetPixel(j, i).B) / 3);
+                        if (grey == 255 && index < l)
                         {
-                            int x = imagePointer1[0];
+                            int x = (int)((imagePointer1[0] + imagePointer1[1] + imagePointer1[2]) / 3);
                             x = x & 252;
 
                             if (index == l)
@@ -134,6 +139,8 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
                             }
                             index += 2;
                             imagePointer1[0] = (byte)x;
+                            imagePointer1[1] = (byte)x;
+                            imagePointer1[2] = (byte)x;
                             imagePointer1 += 3;
                         }
                     }
@@ -142,6 +149,10 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
             }
             stegoImage.UnlockBits(bitmapData1);
             //end embed message
+
+            //reshuffle stegoImage to get stego image
+            stegoImage = permute1.Decrypt(stegoImage);
+
             /*
             CannyData = new Canny(stegoImage, 0.1F, 0F);
             e = CannyData.EdgeMap;
@@ -186,7 +197,7 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
             }
             stegoImage.UnlockBits(bitmapData2);
             */
-            //stegoImage = permute1.Decrypt(stegoImage);
+
             return stegoImage;
         }
         
@@ -209,9 +220,11 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
                 {
                     for (int j = 0; j < mask.Width; j++)
                     {
-                        int x = imagePointer[0];
+                        int x = (int)((imagePointer[0] + imagePointer[1] + imagePointer[2]) / 3);
                         x = x & 252;
                         imagePointer[0] = (byte)x;
+                        imagePointer[1] = (byte)x;
+                        imagePointer[2] = (byte)x;
                         imagePointer += 3;
                     }
                     imagePointer += bitmapData.Stride - (bitmapData.Width * 3);
@@ -269,11 +282,11 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
             e = CannyData.DisplayImage(CannyData.EdgeMap);
             int edge = CannyData.CountEdges();
 
-/*
+            //shuffle stegoImage to get order of embedding
             randomPermute permute = new randomPermute(p);
             randomPermute permute1 = new randomPermute(p);
             e = permute.Encrypt(e);
-            stegoImage = permute1.Encrypt(stegoImage);*/
+            stegoImage = permute1.Encrypt(stegoImage);
 
             //extract message
             string extractedMessage = "";
@@ -287,9 +300,10 @@ namespace APLIKASI_STEGO_EDGE_COVER_CITRA_DIGITAL
                 {
                     for (int j = 0; j < e.Width; j++)
                     {
-                        if (e.GetPixel(j,i).B.Equals(255))
+                        int grey = (int)((e.GetPixel(j, i).R + e.GetPixel(j, i).G + e.GetPixel(j, i).B) / 3);
+                        if (grey == 255)
                         {
-                            int x = imagePointer1[0];
+                            int x = (int)((imagePointer1[0] + imagePointer1[1] + imagePointer1[2]) / 3);
                             byte value = (byte)(x & 3);
 
                             extractedMessage += (value % 2).ToString() + (value / 2).ToString();
